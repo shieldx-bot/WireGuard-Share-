@@ -11,23 +11,22 @@ Tài liệu này bám sát bản thiết kế và bổ sung script tự động 
 ```bash
 sudo bash /path/to/scripts/quick-start.sh
 ```
-
-Script sẽ tự:
+ Script sẽ tự:
 - Cài WireGuard, bật IP forwarding
 - Tạo wg0, khởi động dịch vụ
 - Lấy IP Public của EC2 và tạo client “laptop” với Endpoint đúng
 - In hướng dẫn tải file cấu hình
 
-2) Trên Windows PowerShell, tải file client về (sửa IP và đường dẫn key):
+2) Trên Windows PowerShell, tải file client về (chỉ sửa đường dẫn file .pem):
 
 ```powershell
-scp -i C:\path\to\your-key.pem ubuntu@<EC2_PUBLIC_IP>:/root/laptop.conf C:\Users\$env:USERNAME\Downloads\laptop.conf
+scp -i C:\path\to\your-key.pem ubuntu@<EC2_PUBLIC_IP>:~/laptop.conf "C:\Users\$env:USERNAME\Downloads\laptop.conf"
 ```
 
 Hoặc dùng script tiện ích:
 
 ```powershell
-pwsh -File d:\github\share-internet\scripts\get-client-config.ps1 -HostOrIp <EC2_PUBLIC_IP> -PemKeyPath C:\path\to\your-key.pem -RemotePath /root/laptop.conf -OutPath "$env:USERPROFILE\Downloads\laptop.conf"
+pwsh -File d:\github\share-internet\scripts\get-client-config.ps1 -HostOrIp <EC2_PUBLIC_IP> -PemKeyPath C:\path\to\your-key.pem -RemotePath "~/laptop.conf" -OutPath "$env:USERPROFILE\Downloads\laptop.conf"
 ```
 
 3) Mở WireGuard trên Windows > Import file laptop.conf > Activate.

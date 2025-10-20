@@ -92,11 +92,28 @@ fi
 
 CLIENT_CONF="/root/${CLIENT_NAME}.conf"
 
+# Cố gắng sao chép sang thư mục người dùng đăng nhập (thường là ubuntu trên Ubuntu EC2)
+DEFAULT_USER="${SUDO_USER:-ubuntu}"
+if id -u ubuntu >/dev/null 2>&1; then
+  DEFAULT_USER=ubuntu
+elif id -u ec2-user >/dev/null 2>&1; then
+  DEFAULT_USER=ec2-user
+fi
+
+TARGET_CLIENT_CONF="/home/${DEFAULT_USER}/${CLIENT_NAME}.conf"
+if [[ -f "${CLIENT_CONF}" && -d "/home/${DEFAULT_USER}" ]]; then
+  cp -f "${CLIENT_CONF}" "${TARGET_CLIENT_CONF}"
+  chown "${DEFAULT_USER}:${DEFAULT_USER}" "${TARGET_CLIENT_CONF}" || true
+  chmod 600 "${TARGET_CLIENT_CONF}" || true
+else
+  TARGET_CLIENT_CONF="${CLIENT_CONF}"
+fi
+
 echo
 echo "Hoàn tất Quick Start!"
 echo "- Server PubKey: ${SERVER_PUB}"
 echo "- Endpoint:      ${WG_ENDPOINT}"
-echo "- File client:   ${CLIENT_CONF}"
+echo "- File client:   ${TARGET_CLIENT_CONF}"
 echo
 if command -v qrencode >/dev/null 2>&1; then
   echo "[QR] Quét QR (tiện cho điện thoại):"
@@ -105,5 +122,5 @@ if command -v qrencode >/dev/null 2>&1; then
   echo
 fi
 
-echo "Gợi ý tải về file client từ Windows PowerShell (sửa đường dẫn key và IP):"
-echo "scp -i C:\\path\\to\\your-key.pem ubuntu@${EC2_PUBLIC_IP}:${CLIENT_CONF} C:\\Users\\%USERNAME%\\Downloads\\${CLIENT_NAME}.conf"
+echo "Gợi ý tải về file client từ Windows PowerShell (chỉ cần sửa đường dẫn file .pem):"
+echo "scp -i C:\\path\\to\\your-key.pem ${DEFAULT_USER}@${EC2_PUBLIC_IP}:${TARGET_CLIENT_CONF} \"C:\\Users\\%USERNAME%\\Downloads\\${CLIENT_NAME}.conf\""

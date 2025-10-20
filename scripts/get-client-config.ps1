@@ -2,7 +2,7 @@ param(
   [Parameter(Mandatory=$true)][string]$HostOrIp,
   [Parameter(Mandatory=$true)][string]$PemKeyPath,
   [string]$User = "ubuntu",
-  [string]$RemotePath = "/root/laptop.conf",
+  [string]$RemotePath = "~/laptop.conf",
   [string]$OutPath = "$env:USERPROFILE\\Downloads\\laptop.conf"
 )
 
@@ -26,7 +26,7 @@ $cmd = @(
 )
 
 Write-Host "Đang tải file từ $User@$HostOrIp:$RemotePath về $OutPath ..."
-& scp -i $PemKeyPath "$User@$HostOrIp:$RemotePath" $OutPath | Out-Null
+& scp -i $PemKeyPath "$User@$HostOrIp:$RemotePath" "$OutPath" | Out-Null
 
 if (Test-Path $OutPath) {
   Write-Host "Tải xong: $OutPath" -ForegroundColor Green
