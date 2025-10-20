@@ -1,0 +1,18 @@
+[Interface]
+# Địa chỉ IP của Server trong mạng VPN
+Address = 10.0.0.1/24
+
+# Cổng lắng nghe
+ListenPort = 51820
+
+# Khóa riêng tư của Server
+PrivateKey = <SERVER_PRIVATE_KEY>
+
+# Cấu hình NAT và chuyển tiếp bằng iptables
+# Chú ý thay eth0 thành giao diện WAN thực tế
+PostUp   = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+# [Peer]
+# PublicKey = <CLIENT_PUBLIC_KEY>
+# AllowedIPs = 10.0.0.2/32
